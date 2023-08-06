@@ -1,0 +1,373 @@
+<html lang="en">
+
+<head>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+    <script src="https://maps.google.com/maps/api/js?key=AIzaSyChQwFNqSXUP1f1FgZK0Y1Ehx-mBlsNidM&sensor=false" type="text/javascript"></script>
+    <script>
+        var directionsDisplay;
+        var directionsService = new google.maps.DirectionsService();
+        var map;
+        var address = 'waraseoni';
+        var loc = [];
+        var geocoder;
+
+        function initialize() {
+            var address = 'waraseoni';
+            var loc = [];
+            geocoder = new google.maps.Geocoder();
+            const infowindow = new google.maps.InfoWindow();
+            // next line creates asynchronous request
+            geocoder.geocode({
+                'address': address
+            }, function (results, status) {
+                // and this is function which processes response
+                if (status == google.maps.GeocoderStatus.OK) {
+                    loc[0] = results[0].geometry.location.lat();
+                    loc[1] = results[0].geometry.location.lng();
+                    var latitude = parseFloat(loc[0]);
+                    var longitude = parseFloat(loc[1]);
+                    var centerLoc = new google.maps.LatLng(latitude, longitude);
+
+                    directionsDisplay = new google.maps.DirectionsRenderer();
+                    var mapOptions = {
+                        zoom: 12,
+                        center: centerLoc,
+                        mapTypeId: google.maps.MapTypeId.ROADMAP,
+                        zoomControlOptions: true,
+                        zoomControlOptions: {
+                            style: google.maps.ZoomControlStyle.LARGE
+                        }
+                    };
+                    map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
+                    directionsDisplay.setMap(map);
+                    directionsDisplay.setPanel(document.getElementById("directionsPanel"));
+                    var marker = new google.maps.Marker({
+                        position: centerLoc,
+                        map: map,
+                        title: "Local Area",
+                        draggable: true,
+                        animation: google.maps.Animation.DROP,
+                    });
+
+        //             function initialize() {
+        //     directionsDisplay = new google.maps.DirectionsRenderer();
+        //     var centerLoc = new google.maps.LatLng(-34.397, 150.644);
+        //     var mapOptions = {
+        //         zoom: 7,
+        //         center: centerLoc
+        //     };
+        //     map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
+        //     directionsDisplay.setMap(map);
+        //     directionsDisplay.setPanel(document.getElementById("directionsPanel"));
+        //     var marker = new google.maps.Marker({
+        //         position: centerLoc,
+        //         map: map,
+        //         title: "Local Area"
+        //     });
+        // }
+
+
+                } else {
+                    alert("Geocode was not successful for the following reason: " + status);
+                }
+            });
+
+            // pretty meaningless, because it always will be []
+            // this line is executed right after creating AJAX request, but not after its response comes
+            return loc;
+        }
+        // codeAddress();
+        // function initialize() {
+        //     directionsDisplay = new google.maps.DirectionsRenderer();
+        //     var centerLoc = new google.maps.LatLng(-34.397, 150.644);
+        //     var mapOptions = {
+        //         zoom: 7,
+        //         center: centerLoc
+        //     };
+        //     map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
+        //     directionsDisplay.setMap(map);
+        //     directionsDisplay.setPanel(document.getElementById("directionsPanel"));
+        //     var marker = new google.maps.Marker({
+        //         position: centerLoc,
+        //         map: map,
+        //         title: "Local Area"
+        //     });
+        // }
+
+
+
+        function calcRoute() {
+            var start = document.getElementById("start").value;
+            var end = "nagpur mh";                                              // ADD DYNAMIC LOCATION  
+            var travelMode = document.getElementById("travelMode").getAttribute("for");
+            if (travelMode == "DRIVING") {
+                $("#travelingMode").html("<p>Driving Directions</p>");
+            } else if (travelMode == "TRANSIT") {
+                $("#travelingMode").html("<p>Transit Directions</p>");
+            } else if (travelMode == "WALKING") {
+                $("#travelingMode").html("<p>Walking Directions</p>");
+            } else if (travelMode == "BICYCLING") {
+                $("#travelingMode").html("<p>Cycling Directions</p>");
+            }
+            var request = {
+                origin: start,
+                destination: end,
+                travelMode: google.maps.DirectionsTravelMode[travelMode]
+            };
+            directionsService.route(request, function (response, status) {
+                if (status == google.maps.DirectionsStatus.OK) {
+                    $("#directionsPanel").empty();
+                    directionsDisplay.setDirections(response);
+                } else {
+                    if (status == "ZERO_RESULTS") {
+                        $("#directionsPanel").html(
+                            "No route could be found between the origin and destination.");
+                    } else if (status == "UNKNOWN_ERROR") {
+                        alert(
+                            "A directions request could not be processed due to a server error. The request may succeed if you try again."
+                            );
+                    } else if (status == "REQUEST_DENIED") {
+                        alert("This webpage is not allowed to use the directions service.");
+                    } else if (status == "OVER_QUERY_LIMIT") {
+                        alert("The webpage has gone over the requests limit in too short a period of time.");
+                    } else if (status == "NOT_FOUND") {
+                        alert("At least one of the origin, destination, or waypoints could not be geocoded.");
+                    } else if (status == "INVALID_REQUEST") {
+                        alert("The DirectionsRequest provided was invalid.");
+                    } else {
+                        alert("There was an unknown error in your request. Requeststatus: nn" + status);
+                    }
+                }
+            });
+        }
+        google.maps.event.addDomListener(window, "load", initialize);
+        $(document).ready(function () {
+            $(".modesTab").click(function () {
+                $(".travelMode").attr("id", "");
+                $(this).find(".travelMode").attr("id", "travelMode");
+                if ($("#start").val() != "") calcRoute();
+            });
+            var width = $("#sidebar").innerWidth() - 50;
+            if (width < 170) width = 170;
+            $(".directionForm").css({
+                "width": width
+            });
+        });
+        $(window).resize(function () {
+            var width = $("#sidebar").innerWidth() - 50;
+            if (width < 170) width = 170;
+            $(".directionForm").css({
+                "width": width
+            });
+        });
+
+    </script>
+    <link rel="stylesheet" href="https://www.localarea.com/assets/cache/style.min.css?v=1.2.1">
+
+    <script type="text/javascript" charset="UTF-8" src="https://maps.googleapis.com/maps-api-v3/api/js/47/1/common.js">
+    </script>
+    <script type="text/javascript" charset="UTF-8" src="https://maps.googleapis.com/maps-api-v3/api/js/47/1/util.js">
+    </script>
+    <script type="text/javascript" charset="UTF-8" src="https://maps.googleapis.com/maps-api-v3/api/js/47/1/map.js">
+    </script>
+    <script type="text/javascript" charset="UTF-8"  src="https://maps.googleapis.com/maps-api-v3/api/js/47/1/geometry.js"></script>
+    <script type="text/javascript" charset="UTF-8" src="https://maps.googleapis.com/maps-api-v3/api/js/47/1/directions.js"></script>
+    <script type="text/javascript" charset="UTF-8" src="https://maps.googleapis.com/maps-api-v3/api/js/47/1/marker.js">  </script>
+    <script type="text/javascript" charset="UTF-8" src="https://maps.googleapis.com/maps-api-v3/api/js/47/1/onion.js"> </script>
+    <script type="text/javascript" charset="UTF-8" src="https://maps.googleapis.com/maps-api-v3/api/js/47/1/infowindow.js"></script>
+    <script type="text/javascript" charset="UTF-8" src="https://maps.googleapis.com/maps-api-v3/api/js/47/1/controls.js"></script>
+   
+</head>
+
+<body>
+
+    <div class="wrapper">
+        <div class="row inner-page">
+            <div class="container">
+                <div class="col-md-4  single_left map-direction-container">
+                    <div id="sidebar" class="directionSidebar">
+                        <div class="col-lg-12 ">
+                            <div class="directionForm" style="width: 283px;">
+                                <h3>Get Directions</h3>
+                                <span class="modesTab"><span class="travelMode driving" id="travelMode"
+                                        for="DRIVING"></span></span>
+                                <span class="modesTab"><span class="travelMode transit" id=""
+                                        for="TRANSIT"></span></span>
+                                <span class="modesTab"><span class="travelMode walking" id=""
+                                        for="WALKING"></span></span>
+                                <span class="modesTab"><span class="travelMode cycle" id=""
+                                        for="BICYCLING"></span></span>
+                                <div class="clr"></div>
+                                <div class="startingPoint">
+                                    <p>
+                                        <label>Start Point</label>
+                                        <input type="text" id="start">
+                                    </p>
+                                </div>
+                                <div class="endingPoint">
+                                   <div class="businessName">kharbi</div>   <!--  /// ADD DYNAMIC LOCATION   -->
+                                     <div class="businessAddress">nagpur</div> <!--   // ADD DYNAMIC LOCATION   -->
+                                </div>
+
+
+                                <input type="submit" value="Get Directions" class="directionButton"
+                                    onclick="calcRoute();">
+                            </div>
+                            <div id="travelingMode"></div>
+                            <div id="directionsPanel"></div>
+                            <img src="images/map.png" style="display:none;">
+                        </div>
+
+                    </div>
+                </div>
+                <div class="col-lg-8 pull-right single_right map-container">
+                    <div id="map-canvas">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        jQuery(document).ready(function () {
+            jQuery('#city_search').keyup(function (e) {
+                if (e.which == 40) {
+                    jQuery('#locationSuggestions').show();
+                    if (jQuery('#locationSuggestions > .locationChoices.active').length == 0 || jQuery(
+                            '#locationSuggestions > .locationChoices.active').next().length == 0) {
+                        jQuery('#city_search').val(jQuery(
+                            '#locationSuggestions > .locationChoices:first-child').html());
+                        jQuery('input[name=location_id]').val(jQuery(
+                            '#locationSuggestions > .locationChoices:first-child').attr('id'));
+                        jQuery('#locationSuggestions > .locationChoices:first-child').addClass(
+                            'active');
+
+                        if (jQuery('#locationSuggestions > .locationChoices:first-child').hasClass(
+                                'cityChoice'))
+                            jQuery('input[name=location_type]').val('city');
+                        else
+                            jQuery('input[name=location_type]').val('region');
+                    } else {
+                        var currentItem = jQuery('#locationSuggestions > .locationChoices.active');
+                        jQuery('#city_search').val(currentItem.next().html());
+                        jQuery('input[name=location_id]').val(currentItem.next().attr('id'));
+                        currentItem.removeClass('active');
+                        currentItem.next().addClass('active');
+
+                        if (currentItem.hasClass('cityChoice'))
+                            jQuery('input[name=location_type]').val('city');
+                        else
+                            jQuery('input[name=location_type]').val('region');
+                    }
+                    return false;
+                } else if (e.which == 38) {
+                    jQuery('#locationSuggestions').show();
+                    if (jQuery('#locationSuggestions > .locationChoices.active').length == 0 || jQuery(
+                            '#locationSuggestions > .locationChoices.active').prev().length == 0) {
+                        jQuery('#city_search').val(jQuery(
+                            '#locationSuggestions > .locationChoices:last-child').html());
+                        jQuery('input[name=location_id]').val(jQuery(
+                            '#locationSuggestions > .locationChoices:last-child').attr('id'));
+                        jQuery('#locationSuggestions > .locationChoices:last-child').addClass('active');
+
+                        if (jQuery('#locationSuggestions > .locationChoices:last-child').hasClass(
+                                'cityChoice'))
+                            jQuery('input[name=location_type]').val('city');
+                        else
+                            jQuery('input[name=location_type]').val('region');
+                    } else {
+                        var currentItem = jQuery('#locationSuggestions > .locationChoices.active');
+                        jQuery('#city_search').val(currentItem.prev().html());
+                        jQuery('input[name=location_id]').val(currentItem.prev().attr('id'));
+                        currentItem.removeClass('active');
+                        currentItem.prev().addClass('active');
+
+                        if (currentItem.hasClass('cityChoice'))
+                            jQuery('input[name=location_type]').val('city');
+                        else
+                            jQuery('input[name=location_type]').val('region');
+                    }
+                    return false;
+                } else if (e.which == 13) {
+                    jQuery('#locationSuggestions').html('').hide();
+                    jQuery('#business_search').focus();
+                    return false;
+                }
+            });
+
+            jQuery('#business_search').keyup(function (e) {
+                if (e.which == 40) {
+                    jQuery('#businessSugestions').show();
+                    if (jQuery('#businessSugestions > .locationChoices.active').length == 0 || jQuery(
+                            '#businessSugestions > .locationChoices.active').next().length == 0) {
+
+                        jQuery('input[name=search_id]').val(jQuery(
+                            '#businessSugestions > .locationChoices:first-child').attr('id'));
+                        jQuery('#businessSugestions > .locationChoices:first-child').addClass('active');
+
+                        if (jQuery('#businessSugestions > .locationChoices:first-child').hasClass(
+                                'businessChoice')) {
+                            jQuery('#business_search').val(jQuery(
+                                '#businessSugestions > .locationChoices:first-child').find(
+                                '.BusinessName').html());
+                            jQuery('input[name=search_type]').val('business');
+                        } else {
+                            jQuery('#business_search').val(jQuery(
+                                '#businessSugestions > .locationChoices:first-child').html());
+                            jQuery('input[name=search_type]').val('category');
+                        }
+                    } else {
+                        var currentItem = jQuery('#businessSugestions > .locationChoices.active');
+                        jQuery('input[name=search_id]').val(currentItem.next().attr('id'));
+                        currentItem.removeClass('active');
+                        currentItem.next().addClass('active');
+
+                        if (currentItem.hasClass('businessChoice')) {
+                            jQuery('#business_search').val(currentItem.next().find('.BusinessName')
+                                .html());
+                            jQuery('input[name=search_type]').val('business');
+                        } else {
+                            jQuery('#business_search').val(currentItem.next().html());
+                            jQuery('input[name=search_type]').val('category');
+                        }
+                    }
+                    return false;
+                } else if (e.which == 38) {
+                    jQuery('#businessSugestions').show();
+                    if (jQuery('#businessSugestions > .locationChoices.active').length == 0 || jQuery(
+                            '#businessSugestions > .locationChoices.active').prev().length == 0) {
+                        jQuery('#business_search').val(jQuery(
+                            '#businessSugestions > .locationChoices:last-child').find(
+                            '.BusinessName').html());
+                        jQuery('input[name=search_id]').val(jQuery(
+                            '#businessSugestions > .locationChoices:last-child').attr('id'));
+                        jQuery('#businessSugestions > .locationChoices:last-child').addClass('active');
+
+                        if (jQuery('#businessSugestions > .locationChoices:last-child').hasClass(
+                                'businessChoice'))
+                            jQuery('input[name=search_type]').val('business');
+                        else
+                            jQuery('input[name=search_type]').val('category');
+                    } else {
+                        var currentItem = jQuery('#businessSugestions > .locationChoices.active');
+                        jQuery('#business_search').val(currentItem.prev().find('.BusinessName').html());
+                        jQuery('input[name=search_id]').val(currentItem.prev().attr('id'));
+                        currentItem.removeClass('active');
+                        currentItem.prev().addClass('active');
+
+                        if (currentItem.hasClass('businessChoice'))
+                            jQuery('input[name=search_type]').val('business');
+                        else
+                            jQuery('input[name=search_type]').val('category');
+                    }
+                    return false;
+                } else if (e.which == 13) {
+                    jQuery('#businessSugestions').html('').hide();
+                    jQuery('button[name=searchBusiness]').trigger('click');
+                    return false;
+                }
+            });
+        });
+
+    </script>
+</body>
+</html>

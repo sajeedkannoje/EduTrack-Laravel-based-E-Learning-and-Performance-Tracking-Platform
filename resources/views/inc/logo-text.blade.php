@@ -1,0 +1,1 @@
+<div class="brand-text  pl-0 text-bold {{ $class ?? 'h4' }}"><span class='text-dark'>FOLLOW FOR NOW</span> <span class="text-primary"><i>LIFE SKILLS 101</i></span></div>

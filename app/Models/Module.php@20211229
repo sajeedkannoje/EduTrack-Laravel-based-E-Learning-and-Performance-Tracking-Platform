@@ -1,0 +1,252 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
+
+class Module extends Model
+{
+    use HasFactory;
+
+    protected $guarded = [];
+
+
+    /**
+     * Get all of the sections for the Module
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function sections()
+    {
+        return $this->hasMany(Section::class);
+    }
+
+
+    public function introVideo()
+    {
+        if ($this->introduction_video) {
+            return $this->introduction_video;
+        } else {
+            return asset('videos/sss.mp4');
+        }
+    }
+
+    
+    public function getFeaturesAttribute($value)
+    {
+    
+        return explode(';', $value);
+    
+    }
+    
+    public static function allModulesCopletedByUser()
+    {
+        $moduleCheck = true;
+        $allModules = self::where('module_type', 'student')->get();
+        
+        foreach ($allModules as $module) {
+            $query = DB::table('sections')
+            ->rightJoin('completed_sections', 'sections.id', '=', 'completed_sections.section_id')
+            ->where('sections.module_id', '=', $module->id)
+            ->where('completed_sections.user_id', '=', auth()->user()->id);
+
+            if($query->count() != $module->sections->count()){
+                $moduleCheck = false;
+                break;
+            }
+
+            if($query->where('completed_sections.quiz_completed', '<>', 1)->count()){
+                $moduleCheck = false;
+                break;
+            }
+        }
+
+        return $moduleCheck;
+        
+    }
+    
+
+    
+    public function moduleCompletedByThisUser()
+    {
+
+        $query = DB::table('sections')
+            ->rightJoin('completed_sections', 'sections.id', '=', 'completed_sections.section_id')
+            ->where('sections.module_id', '=', $this->id)
+            ->where('completed_sections.user_id', '=', auth()->user()->id);
+            
+        if($query->count() != $this->sections->count()){
+            return false;
+        }
+
+        if($query->where('completed_sections.quiz_completed', '<>', 1)->count()){
+            return false;
+        }
+
+        return true;
+    
+    }
+    
+    public function checkPreviousModule(){
+        
+        $preModule = self::where('sequence', '<' , $this->sequence)->orderBy('sequence', 'desc')->first();
+
+        if(!$preModule){
+            return true;
+        }
+
+        if($preModule->moduleCompletedByThisUser()){
+            return true;
+        }
+
+        return false;
+        
+        
+    }
+
+
+    // for students
+    public static function whichModuleNext()
+    {
+        
+        $modules = self::where('module_type', 'student')->orderBy('sequence', 'asc');
+
+        
+        foreach ($modules->get() as $module) {
+
+            $query = DB::table('sections')
+                // ->join('modules', 'sections.module_id', '=', 'modules.id')
+                ->rightJoin('completed_sections', 'sections.id', '=', 'completed_sections.section_id')
+                ->where('sections.module_id', '=', $module->id)
+                ->where('user_id', '=', auth()->user()->id);
+            
+            if($query->count() != $module->sections->count()){
+                return $module;
+            }
+
+            if($query->where('completed_sections.quiz_completed', '<>', 1)->count()){
+                return $module;
+            }
+
+
+        }    
+
+        return $modules->first();
+        
+
+    }
+    
+
+    public function nextModuleForStudent()
+    {
+        return self::where('module_type', 'student')->where('sequence', '>', $this->sequence)->orderBy('sequence', 'asc')->first();
+        
+        
+    }
+
+    public function nextSectionForModule() 
+    {
+
+        $completedSections  = DB::table('sections')
+        ->join('completed_sections', 'sections.id', '=', 'completed_sections.section_id')
+        ->where('sections.module_id', $this->id)
+        ->where('completed_sections.user_id', auth()->user()->id)
+        ->orderBy('sections.sequence', 'desc')->first();
+
+        if($completedSections){
+            $section = Section::where('module_id', $this->id)->where('sequence', '>', $completedSections->sequence)->orderBy('sequence', 'asc')->first();
+            
+            if($section){
+
+                return $section;
+            }
+
+        }
+        
+        return Section::where('module_id', $this->id)->orderBy('sequence', 'asc')->first();
+
+    }
+
+    public function moduleInfoExerpt()
+    {
+        return substr($this->description, 0, 400);
+    }
+
+
+
+    public function finalExam()
+    {
+        $finalSection = Section::where('module_id', $this->id)->where('title', 'LIKE', 'final section')->first();
+      
+        if($finalSection){
+            return $finalSection->quiz;
+        }
+        return false;
+    }
+
+    public function finalExamResult($userId = 0)
+    {
+        $finalExam = $this->finalExam();
+        
+        $userQuizAttempts = $finalExam->attempts->where('user_id', auth()->user()->id)->first();
+        if($userId){
+            $userQuizAttempts = $finalExam->attempts->where('user_id', $userId)->first();
+        }
+        
+        $score = 0;
+        
+        if($finalExam){
+            
+            $score = $finalExam->calculateUserScoreForQuiz($userQuizAttempts);
+
+
+        }
+        return $score;
+    }
+
+
+
+    // For teachers
+    public function previousModule()
+    {
+        $module = self::where('module_type', 'teacher')->where('sequence', '<', $this->sequence)->orderBy('sequence', 'desc')->first();
+
+        if($module){
+            return $module;
+        }
+        
+        return false;
+    }
+    
+    public function nextModule()
+    {
+        $module = self::where('module_type', 'teacher')->where('sequence', '>', $this->sequence)->orderBy('sequence', 'asc')->first();
+        
+        if($module){
+            return $module;
+        }
+        
+        return false;
+        
+    }
+
+    public function moduleCompletedByStudent($studentId)
+    {
+        $query = DB::table('sections')
+            ->rightJoin('completed_sections', 'sections.id', '=', 'completed_sections.section_id')
+            ->where('sections.module_id', '=', $this->id)
+            ->where('completed_sections.user_id', '=', $studentId);
+            
+        if($query->count() != $this->sections->count()){
+            return false;
+        }
+
+        if($query->where('completed_sections.quiz_completed', '<>', 1)->count()){
+            return false;
+        }
+
+        return true;
+    }
+}

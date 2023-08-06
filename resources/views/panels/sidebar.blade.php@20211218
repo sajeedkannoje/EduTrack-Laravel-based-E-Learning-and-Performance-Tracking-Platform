@@ -1,0 +1,295 @@
+@php
+$configData = Helper::applClasses();
+@endphp
+<style>
+.site-prefer-black,
+.navigation .nav-item a {
+    background: #111111 !important;
+}
+
+.main-menu {
+    width: 330px !important;
+}
+
+.main-menu .navbar-header {
+    width: 330px !important;
+    padding-top: 30px;
+    height: max-content;
+    padding-left: 35px;
+    padding-bottom: 10px;
+}
+
+.main-menu ul {
+    margin-bottom:125px;
+}
+
+.brand-logo {
+    font-size: 0.5208333333333334vw;
+}
+
+.brand-logo .logo-icon img {
+    width: 6.5em;
+    height: 6.5em;
+}
+
+.brand-logo .logo-txt img {
+    width: 9.7em;
+    height: 2.4em;
+}
+
+.logo-txt {
+    align-self: center;
+}
+
+.menu-content li {
+    padding-left: 20px;
+}
+
+.main-menu-content .main-menu-navigation .nav-item>a {
+    margin-top: 10px !important;
+    height: max-content;
+    padding-left: 40px !important;
+}
+
+.nav-item svg {
+    margin-right: 10px !important;
+}
+
+.divider {
+    height: 1px;
+    margin-top: 20px;
+    margin-bottom: 15px;
+}
+
+.main-menu .navbar-header .brand-logo .navbar-brand {
+    margin: 0;
+}
+
+.navigation .nav-item a {
+    box-shadow: none !important;
+    padding-left: 0px !important;
+}
+
+.active {
+    box-shadow: none !important;
+    background: none !important;
+}
+
+.navigation .nav-item .menu-title {
+    text-decoration: none;
+    height: max-content;
+}
+
+.navigation .nav-item a::after {
+    margin-left: 5px;
+}
+
+.main-menu .navigation .nav-item a::after {
+    display: none !important;
+}
+
+.module-section svg,
+.section-quiz svg {
+    padding-top: 4px;
+    align-self: baseline;
+}
+
+.main-menu.menu-dark .navigation>li>ul li:first-of-type {
+    margin-top: 0 !important;
+}
+
+.text-muted {
+    color: #4c4c4c !important;
+}
+
+.menu-content .active a {
+    text-decoration: underline !important;
+    text-decoration-color: currentcolor !important;
+    text-decoration-color: yellow !important;
+    text-underline-offset: 6px;
+}
+.sidebar-group-active > a span{
+    color:yellow !important;
+}
+
+.active-url>a span,
+.nav-item.active> a span,
+.active > .sub-menu-url span{
+    color: white !important;
+}
+.main-menu-content {
+    font-size: 0.5208333333333334vw;
+    margin-bottom: 125px;
+}
+
+.navigation {
+    font-size: max(13px,1.6em);
+}
+
+.menu-content svg,
+.nav-item svg {
+    font-size: 0.5208333333333334vw !important;
+    height: 2em !important;
+    width: 2em !important;
+}
+.main-menu span{
+    color: #5e5e5e !important;
+}
+@media(max-width:1200px) {
+
+    .menu-content svg,
+    .nav-item svg,
+    .brand-logo{
+        font-size: 7px !important;
+    }
+
+    .main-menu {
+        width: 260px !important;
+    }
+}
+
+@media(max-width:767.98px) {
+
+    .menu-content svg,
+    .nav-item svg,
+    .brand-logo,
+    .main-menu-content {
+        font-size: 6.5px !important;
+    }
+}
+</style>
+<div class="main-menu menu-fixed {{(($configData['theme'] === 'dark') || ($configData['theme'] === 'semi-dark')) ? 'menu-light' : 'menu-dark'}} site-prefer-black menu-accordion menu-shadow"
+    data-scroll-to-active="true">
+    <div class="navbar-header">
+        <div class="brand-logo">
+            <a class="navbar-brand" href="{{url('/')}}">
+                <div class="d-flex">
+                    <div class="logo-icon">
+                        <img src="{{ asset('images/logo/sidebar_logo.png') }}" alt="Website Logo" height="65px"
+                            width="65px">
+                    </div>
+
+                    <div class="ms-1 logo-txt">
+                        <img src="{{ asset('images/logo/sidebar_logo_txt.png') }}" alt="Website Name">
+                    </div>
+
+                </div>
+
+            </a>
+        </div>
+        {{-- <ul class="nav navbar-nav flex-row">
+      <li class="nav-item me-auto">
+        <a class="navbar-brand" href="{{url('/')}}">
+        <span class="brand-logo">
+            <img src="{{ asset('images/logo/site_logo.png') }}" alt="Website Logo">
+        </span>
+        <div class="brand-text text-bold h6">
+            <span class="text-primary">
+                FOLLOW FOR NOW<br>
+                LIFE SKILLS 101
+            </span>
+        </div>
+        </a>
+        </li>
+        <li class="nav-item nav-toggle">
+            <a class="nav-link modern-nav-toggle pe-0" data-toggle="collapse">
+                <i class="d-block d-xl-none text-primary toggle-icon font-medium-4" data-feather="x"></i>
+                <i class="d-none d-xl-block collapse-toggle-icon font-medium-4 text-primary" data-feather="disc"
+                    data-ticon="disc"></i>
+            </a>
+        </li>
+        </ul> --}}
+    </div>
+    {{-- <div class="shadow-bottom"></div> --}}
+    <div class="divider border-bottom-dark"></div>
+    <div class="main-menu-content">
+        <ul class="navigation  site-prefer-black" id="main-menu-navigation" data-menu="menu-navigation">
+            {{-- Foreach menu item starts --}}
+
+            @if(isset($menuData[0]))
+            @foreach($menuData[0]->menu as $menu)
+            @php
+            $menu = (object)$menu;
+            @endphp
+
+            @if(isset($menu->navheader))
+            <li class="navigation-header">
+                <span>{{ __($menu->navheader) }}</span>
+                <i data-feather="more-horizontal"></i>
+            </li>
+            @else
+            {{-- Add Custom Class with nav-item --}}
+            @php
+            $custom_classes = "";
+
+            if(isset($menu->classlist)) {
+            $custom_classes = $menu->classlist;
+            }
+            $course_text = "";
+            if(isset($menu->textClass)){
+            $course_text = $menu->textClass;
+            }
+            @endphp
+            <li
+                class="nav-item {{ $custom_classes }} {{Route::currentRouteName() === $menu->slug ? 'active' : ''}} {{'/'.Request::path() == $menu->url ? 'active-url':''}}">
+                {{-- {{$menu->url}} --}}
+                {{-- {{Request::path()}} --}}
+                {{--  {{Request::path() == $menu->url}} --}}
+                <a href="{{isset($menu->url)? url($menu->url):'javascript:void(0)'}}" class="d-flex"
+                    target="{{isset($menu->newTab) ? '_blank':'_self'}}">
+                    <i class="fw-bolder text-yellow {{ $menu->icon }}"></i>
+                    <span class="menu-title text-wrap {{ $course_text }}">{{ __($menu->name) }}</span>
+                    @if (isset($menu->badge))
+                    <?php $badgeClasses = "badge rounded-pill badge-light-primary ms-auto me-1" ?>
+                    <span
+                        class="{{ isset($menu->badgeClass) ? $menu->badgeClass : $badgeClasses }}">{{$menu->badge}}</span>
+                    @endif
+                </a>
+                @if(isset($menu->submenu))
+                @include('panels/submenu', ['menu' => $menu->submenu])
+                @endif
+
+                <!-- @isset($menu->addDivider)
+          <div class="divider border-bottom-dark"></div>    
+        @endisset -->
+
+            </li>
+            <div class="divider border-bottom-dark"></div>
+            @endif
+            @endforeach
+            @endif
+            {{-- Foreach menu item ends --}}
+
+
+            <li class="nav-item d-lg-none d-md-none">
+                <a class="nav-link d-flex align-items-center" id="dropdown-user" href="javascript:void(0);"
+                    data-bs-toggle="dropdown" aria-haspopup="true">
+                    <img class="rounded mr-1" src="{{ auth()->user()->profileImage() }}" alt="avatar" height="30px"
+                        width="30px">
+                    <span class="fw-bolder text-white">
+                        {{ auth()->user()->fullName() }}
+                    </span>
+                </a>
+
+                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdown-user">
+
+                    <a class="dropdown-item fw-bolder text-black" href="{{ route('account.index') }}">
+                        <i class="me-50" data-feather="user"></i> Profile
+                    </a>
+
+
+
+                    <form class="d-none" id="main-logout-form-small" data-btnload="true" method="POST"
+                        action="{{ route('logout') }}">
+                        @csrf
+                    </form>
+                    <a class="dropdown-item fw-bolder text-black" href="logut-me" onclick="event.preventDefault();
+          document.getElementById('main-logout-form-small').submit();">
+                        <i class="me-50" data-feather="power"></i> Logout
+                    </a>
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>
+<!-- END: Main Menu-->

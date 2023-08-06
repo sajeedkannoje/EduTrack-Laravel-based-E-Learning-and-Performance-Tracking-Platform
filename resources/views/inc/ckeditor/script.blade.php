@@ -1,0 +1,1 @@
+<script src="{{ asset('js/scripts/ckeditor/ckeditor.js') }}"></script>

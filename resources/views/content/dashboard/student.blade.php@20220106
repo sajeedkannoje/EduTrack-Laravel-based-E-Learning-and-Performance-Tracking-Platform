@@ -1,0 +1,504 @@
+@extends('layouts/contentLayoutMaster')
+
+{{-- @section('title', 'Home') --}}
+
+@section('page-style')
+    {{-- <link rel="stylesheet" href="{{ asset('plugins/owl_carousel/css/owl.carousel.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('plugins/owl_carousel/css/owl.theme.default.min.css') }}"> --}}
+
+
+    <style>
+        .course-competion-call{
+            right: 4%;
+            max-width: 15%;
+            
+        }
+
+        .quiz-score-card{
+            width: fit-content;
+            font-weight: bold;
+        }
+        
+        .course-completion-info{
+            right: 0 !important;
+        }
+        .module-exam-card{
+            width: fit-content;
+        }
+        .content-body{
+            margin-right:92px;
+            margin-left:12px;
+        }
+        .card-body, .card-header{
+            padding:0 ;
+        }
+        .font-ml,.card-body h3{
+            font-size:max(2.6em,17px);
+            line-height:0.755;
+        }
+        .font-m{ 
+            font-size:max(2.4em,15px);
+            line-height:0.855;
+        }
+        .font-s,.card-body p,.quiz-based-card > div{
+            font-size:max(2em,13px);
+            line-height:2;
+        }
+        .card-body,.card-header, .quiz-based-card {
+            font-size: 0.5208333333333334vw;
+        }
+        .head{
+            margin-bottom:30px;
+        }
+        .card-body h3{
+            margin-bottom:25px;
+        }
+        .quiz-based-card {
+            margin-top: 40px;
+        }
+        .quiz-based-card > div{
+            margin-bottom:20px;
+        }
+        .card-header span {
+            background-color: #ccc;
+        }
+        .module-exam-card{
+            gap:1.5em;
+        }
+        .mark-body{
+            gap:0.5em;
+        }
+        .title{
+            margin-left:40px;
+            margin-top:20px;
+        }
+        .header-navbar .navbar-container ul.navbar-nav li.dropdown-user .dropdown-menu{
+            margin-top: 50px;
+        }
+        .student-module-head-name {
+            font-size: max(2em,13px);
+            line-height: 2;
+        }
+        .student-module-head-title {
+            font-size: max(2em,13px);
+            line-height: 2;  
+        }
+        .head-module-content {
+            margin-bottom:20px;
+        }
+        .dashboard-card-container {
+            display:flex;     
+            flex-wrap:wrap;
+            justify-content:space-between;
+            margin: 20px 40px;
+            padding:0px;
+        }
+        .dashboard-module-card {
+            width:100%;
+            margin:0px !important;
+            margin-bottom:50px !important;
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position:center;
+            box-shadow: inset 0px 0px 546px 95px #000000 !important;
+            display: flex;
+            flex-direction: row;
+            align-items:center;
+            justify-content:space-between;
+        }
+        .dashboard-module-card .card-body .font-s{
+            color:white !important;
+        }
+        .module-exam-card {
+            width:50%;
+            margin:  0 auto;
+        }
+        .module-exam-score-container {
+            width:20%;
+        }
+        .module-exam-score {
+            position:relative;
+        }
+        .module-exam-score p {
+            position: absolute;
+            top: 48%;
+            left:23%;
+            font-size:20px;
+            color:#feef00;
+        }
+
+        .module-exam-card .mark-body {
+            display:flex !important;
+            justify-content: space-between !important;
+            flex-direction:column;
+        }
+        .module-exam-card .mark-body .mt-1 {
+            margin-top:0px !important;
+        }
+
+        /* media queries */
+        @media only screen and (max-width:1200px){
+            .dashboard-card-container {
+                margin:40px 20px;
+                margin-bottom:0px;
+            }
+        }
+
+        @media only screen and (max-width:880px){
+            .dashboard-module-card {
+                width:100%;
+            }
+
+            .dashboard-module-card {
+                margin-bottom: 30px !important;
+            }
+        }
+
+        @media only screen and (max-width:767px){
+            .dashboard-card-container {
+                margin:40px 0px;
+            }
+        }
+
+        @media only screen and (max-width:600px){
+            .dashboard-card-container {
+                margin:20px 0px;
+            }
+        }
+    </style>
+@endsection
+
+@section('content')
+
+
+
+@if(!Auth::user()->referred_by)
+  <div class="alert alert-danger" role="alert">
+    <h4 class="alert-heading text-center"><i class="fi fi-br-bell-ring mx-1"></i> Referral code is not set!</h4>
+    <p class="m-1 text-center">Please update your referral code. Otherwise, we will not able to generate your scorecard.</p>
+    <p class="m-1 text-center">"You can get Referral code from your teacher."</p>
+    <p class="m-1 text-center"><a href="{{ url('/account')}}" class="alert-link">Click here to update your Referral Code. </a> </p>
+  </div>
+@endif
+@if ($allModuleCompleted)
+    
+    <button class="btn btn-sm btn-outline-primary zindex-4 position-fixed course-completion-info"><i data-feather="info" class="font-medium-3 text-primary"></i></button>
+
+    <div class="course-competion-call bg-gradient-primary text-white zindex-4 position-fixed d-none fw-bold text-primary p-1 rounded-3">
+        you have completed All the modules now you can download your 
+        <a href="{{ route('my-certificate') }}" class="text-white text-decoration-underline">certificate</a>
+    </div>
+@endif
+
+<div>
+    <div class="row">
+        
+        <div class="card col-md-12">
+
+            <div class="card-body text-black student-module-head">
+                    
+                    <div class="head fw-bold head-module-content">
+                        <span class="text-black font-ml student-module-head-name">Module:</span>  
+                        <span class="text-primary font-m student-module-head-title">{!! $module->title !!}</span>
+                    </div>
+                    <div class="">
+                        <div class="head fw-bold head-section-content">
+                            <span class="text-black font-ml student-module-head-name">Section:</span>
+                            <span class="text-danger font-m student-module-head-title">{!! $section->title !!}</span>
+                        </div>
+
+                        <div class="px-0">
+                            <div class="fw-bold">
+                                {{-- <span class="text-black font-ml">Content:</span> --}}
+                                <span class="text-black">{!! $section->sectionInfoExerpt() !!}</span>
+                                <a class="text-success" href="{{ route('this-section', $section->id) }}"> continue reading...</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- <span 
+                    data-toggle="tooltip" 
+                    data-placement="top" 
+                    title="open section" class="text-info font-m">
+                        <i data-feather='arrow-right-circle'></i><span> --}}
+                {{-- </a> --}}
+            </div>
+        </div>
+
+        @php
+            $cardAdded = false;
+        @endphp
+     @if (!$cardAdded)
+     <div class="row mt-2 mb-2 final-exams-content">
+         <div class="title col-md-12 fw-bold h3 p-0 text-black font-s">
+             <span class="">Quiz and Final Exams Results</span>
+         </div>
+     </div>
+     @endif
+        @if (!empty($modules))
+        <div class='dashboard-card-container'>
+            @php
+                 $answerCrrt=[];
+                $totalQue =[];
+                $questionAttempt = [];
+            @endphp
+                @foreach ($modules as $mod)
+
+
+                    @if ($mod->finalExam())
+                        @php
+                            $finalQuiz = $mod->finalExam();
+                            $moduleImage='';
+                            if($section->images){
+                             $imageArry = explode(';', $section->images);
+                            //  dd($finalQuiz->section->id);
+                            $moduleImage=   asset('images/section_images/section'.$section->id.'/'.$imageArry[0]);
+                            
+                            }else{
+                                $moduleImage="";
+                            }
+                        @endphp
+                   
+     
+
+                        
+                        @if($finalQuiz->section->completedByThisUser()['section_completed'])
+                            
+                        @php
+                            array_push($questionAttempt, $finalQuiz->section->quiz->questions->count());
+                            array_push( $answerCrrt , $mod->finalExamResult());
+                            array_push($totalQue , $finalQuiz->questions->count());
+                        @endphp
+                            {{-- <div class=" card me-1 dashboard-module-card" style="background-image:url({{$moduleImage }})">
+                                <div class="card-body module-exam-card text-black fw-bold d-grid">
+                                    <div class="card-links font-s">
+                                        Module: <a class="text-success" href="{{ route('my-courses', $finalQuiz->section->module->id) }}">
+                                            {{ $finalQuiz->section->module->title }}
+                                        </a>
+                                        
+                                    </div>
+                                    
+                                    <div class="statu-body text-black fw-bold mt-1 font-s">
+                                        Exam Status:  <span class=" px-2 badge bg-success rounded-pill">Completed</span>
+                                    </div>
+        
+                                    <div class="mark-body text-black fw-bold mt-1 font-s d-flex justify-content-around">
+                                        <div >
+                                            Total Question:  {{ $finalQuiz->questions->count() }}
+                                        </div>
+                                        
+                                        <div class="mt-1">
+                                            Correct Answers:  {{ $mod->finalExamResult() }}
+                                        </div>
+                                    </div>
+                                    <div class="mark-body text-black fw-bold mt-1 font-s d-flex justify-content-around">
+
+                                        
+                                        <div class="mt-1">
+                                            Exam Score:  {{ $mod->finalExamResult() }}
+                                        </div>
+                                        <div class="mt-1">
+                                            Exam percentage:  {!! Helper::scorePercentage($mod->finalExamResult(),$finalQuiz->questions->count()) !!}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> --}}
+
+                        @else
+                            {{-- <div class="card me-1 dashboard-module-card " style="background-image:url({{$moduleImage }})">
+                                <div class="card-body module-exam-card text-black fw-bold d-grid">
+                                    <div class="card-links font-s">
+                                        Module: <a class="text-success" href="{{ route('my-courses', $finalQuiz->section->module->id) }}">
+                                            {{ $finalQuiz->section->module->title }}
+                                        </a>
+                                    </div>
+                                    <div class="statu-body text-black fw-bold mt-1 font-s">
+                                        Exam Status:  <span class="badge px-2 bg-warning rounded-pill">Pending</span>
+                                    </div>
+
+
+                                    <div class="mark-body text-black fw-bold mt-1 font-s d-grid">
+                                        <div >
+                                            Total Question:  {{ __('N/A') }}
+                                        </div>
+                                        
+                                        <div class="mt-1">
+                                            Correct Answers:  {{ __('N/A') }}
+                                        </div>
+                                    </div>
+                                    <div class="mark-body text-black fw-bold mt-1 font-s d-flex justify-content-around">
+                                        
+                                        <div class="mt-1">
+                                            Exam Score:  {{ __('N/A') }}
+                                        </div>
+                                        <div class="mt-1">
+                                            Exam percentage:  {{ __('N/A') }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                             --}}
+                             @php
+                                  array_push($totalQue , $finalQuiz->questions->count());
+                             @endphp
+                            
+                        @endif
+     
+
+                        @if (!$cardAdded)
+                        
+                            @php
+                                $cardAdded = true;
+                            @endphp
+                        @endif
+
+                    @endif
+            
+                @endforeach
+                
+                  <div class=" card me-1 dashboard-module-card" style="background-image:url({{$moduleImage}})">
+                                <div class="card-body module-exam-card text-black fw-bold d-grid">
+                                 
+                                    <div class="mark-body text-black fw-bold mt-1 font-s d-flex justify-content-around">
+                                        <div >
+                                            Total Final Exam:   {{ count($totalQue) }}
+                                        </div> 
+                                        <div >
+                                            Total Final Exam Question:   {{ array_sum($totalQue) }}
+                                        </div>
+                                    </div>
+                                    <div class="mark-body text-black fw-bold mt-1 font-s d-flex justify-content-around">
+
+                                       <div class="mt-1">
+                                          Final Exam Correct Answers:   {{ array_sum($answerCrrt) }}
+                                        </div> 
+                                        <div>
+                                            Questions Attempt: {{array_sum($questionAttempt)}}
+                                        </div>
+                                  
+                                    </div>
+                                    <div class="mark-body text-black fw-bold mt-1 font-s d-flex justify-content-around">
+
+                                        <div class="mt-1">
+                                           Final Exam percentage:  {!! Helper::scorePercentage(array_sum($answerCrrt),array_sum($totalQue)) !!}
+                                        </div>
+                                        <div class="mt-1">
+                                            Overall percentage:  {!! Helper::scorePercentage(array_sum($answerCrrt),array_sum($questionAttempt)) !!}
+                                        </div>
+                                    </div>
+                                    {{-- <div class="mark-body text-black fw-bold mt-1 font-s d-flex justify-content-around">
+
+                                        <div class="mt-1">
+                                            Exam percentage:  {!! Helper::scorePercentage(array_sum($answerCrrt),array_sum($totalQue)) !!}
+                                        </div>
+                                    </div> --}}
+                                </div>
+                                <div class="module-exam-score-container">
+                                    <div class="module-exam-score">
+                                        <img src="images/logo/yellow-logo.png" alt="">
+                                        <p>{!! Helper::scorePercentage(array_sum($answerCrrt),array_sum($questionAttempt)) !!}</p>
+                                    </div>
+                                </div>
+                            </div>
+               
+               
+        </div>
+            </div>
+        @endif
+        
+        {{-- Section for the quiz attempts and score according to the sections --}}
+        {{-- <div class="row">
+            <div class="card col-md-12">
+            <div class="  font-medium-3 mb-1 fw-bold text-black">
+                
+                <div class="card-header">
+                    <div class="font-ml">
+                        Quiz Attempt and Quiz Average Results
+                    </div>
+                    
+
+                    <div class="form">
+                        <form action="" method="post" id="score-finder-form">
+                            <div class="row">
+                                <div class="col">
+                                    <select name="module_name" id="module_name" class="form-select text-black fw-bold font-s">
+                                        <option value="" class="fw-bold text-center text-black">
+                                            {{ __("---Change Modules---") }}
+                                        </option>
+                                        @foreach ($modules as $mod)
+                                            <option value="{{ $mod->id }}" {{ $mod->id == $quizAndscores['module_id'] ? 'selected' : '' }} class="fw-bold text-black">
+                                                {{ ucwords($mod->title) }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                
+                            </div>
+                        </form>
+                    </div>
+                    <span class="w-100 mt-1" style="height: 1px"></span>
+                    
+                </div>
+               <div id="quiz-based-card" class="quiz-based-card">
+                           <x-dashboard-quiz-score-card :quizAndscores=$quizAndscores />
+                     </div>
+            </div>
+
+           
+            
+        </div> 
+        </div> --}}
+       
+        {{-- end of quiz attempts and score --}}
+    </div>
+
+
+  </div>
+    
+@endsection
+
+
+@section('page-script')
+  <script>
+      $('#module_name').change( () => {
+        
+        moduleId = $('#module_name').val();
+        $.ajax({
+                url : "{{ route('quizzesScoreForModule') }}",
+                type: "POST",
+                data: {
+                    'moduleId' : moduleId
+                },
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                },
+                beforeSend: () => {
+                    submitLoader(document.getElementById('module_name'));
+                },
+                success: (data) => {
+                    
+                    // $('#quiz-score-table tbody').html(data)                    
+                    $('#quiz-based-card').html(data.html)
+                    submitReset(document.getElementById('module_name'));
+                },
+                error: (err) =>{
+                    setAlert({
+                        code: "error",
+                        title: "Oops!",
+                        message: "Something went wrong Please try again!",
+                    });
+                    submitReset(document.getElementById('module_name'));
+                }
+            })
+
+      })
+
+
+      $('.course-completion-info').click((e) => {
+        e.preventDefault();
+        $('.course-competion-call').toggleClass('d-none');
+      })
+
+  </script>
+@endsection

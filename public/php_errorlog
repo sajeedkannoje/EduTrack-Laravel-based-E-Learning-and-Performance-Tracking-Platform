@@ -1,0 +1,7 @@
+[18-Nov-2021 05:39:19 UTC] PHP Fatal error:  Uncaught ReflectionException: Class env does not exist in /home/customer/www/zeroguess.us/public_html/n17/FFN/app/vendor/laravel/framework/src/Illuminate/Container/Container.php:873
+Stack trace:
+#0 /home/customer/www/zeroguess.us/public_html/n17/FFN/app/vendor/laravel/framework/src/Illuminate/Container/Container.php(873): ReflectionClass->__construct('env')
+#1 /home/customer/www/zeroguess.us/public_html/n17/FFN/app/vendor/laravel/framework/src/Illuminate/Container/Container.php(754): Illuminate\Container\Container->build('env')
+#2 /home/customer/www/zeroguess.us/public_html/n17/FFN/app/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(841): Illuminate\Container\Container->resolve('env', Array, true)
+#3 /home/customer/www/zeroguess.us/public_html/n17/FFN/app/vendor/laravel/framework/src/Illuminate/Container/Container.php(692): Illuminate\Foundation\Application->resolve('env', Array)
+#4 /home/customer/www/zeroguess.us/public_html/n17/FFN/app/vendor/laravel/framework/src/Illuminate/Foundation/Ap in /home/customer/www/zeroguess.us/public_html/n17/FFN/app/vendor/laravel/framework/src/Illuminate/Container/Container.php on line 875

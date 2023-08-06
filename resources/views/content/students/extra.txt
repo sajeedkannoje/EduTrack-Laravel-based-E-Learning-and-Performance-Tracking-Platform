@@ -1,0 +1,14 @@
+Modules
+Module folder is for the my course route which will show all the modules available
+in the courses.
+
+
+
+
+//Sections
+Sections Folder is for the single module and single sections...
+section/ index file is responsible for the initital view of the module content it will content small description of the module
+
+singleSection.blade.php as it is clear from its name is responsible for the signle section view 
+
+//Quiz folder is for the quiz section currently this is in the process....

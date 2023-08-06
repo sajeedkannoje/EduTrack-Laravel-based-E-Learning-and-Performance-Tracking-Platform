@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <input type="text" id="value" value="abc123"> <button id="copy">Copy</button> <br>
+    <input type="text" id="paste-bin" value=""> <button id="paste">Paste</button>
+</body>
+<script>
+    const COPY = document.querySelector('#copy')
+    const PASTE = document.querySelector('#paste')
+    const VALUE = document.querySelector('#value')
+    const BIN = document.querySelector('#paste-bin')
+
+    COPY.addEventListener('click', async ()=>{
+        await navigator.clipboard.writeText(VALUE.value)
+    });
+    PASTE.addEventListener('click', async ()=>{
+        const READ = await navigator.clipboard.readText()
+        console.log(READ);
+        BIN.VALUE = READ;
+    });
+
+
+</script>
+</html>

@@ -1,0 +1,170 @@
+@extends('layouts/fullLayoutMaster')
+
+@section('title', 'Login Page')
+
+@section('page-style')
+{{-- Page Css files --}}
+<link rel="stylesheet" href="{{ asset(mix('css/base/pages/authentication.css')) }}">
+<style>
+    .login-custom-style{
+      height: 100vh;
+    }
+    .custom_divider_wrapper{
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+    }
+</style>
+@endsection
+
+@section('content')
+<div class=" ">
+  <div class="login-custom-style">
+    <!-- Login basic -->
+    <div class="card mb-0 h-100">
+      <div class="card-body p-0">
+        <div class="row h-100">
+          <div class="col-md-5 ">
+            <div class="m-auto w-50">
+              {{-- <div class="text-center position-absolute top-25 w-25 rounded-circle bg-bitbucket">
+                1st
+              </div>
+              <div class="text-center position-absolute top-50 w-25 rounded-circle bg-light">
+                2nd
+              </div>
+              <div class="text-center position-absolute top-100 w-25 rounded-circle bg-dark">
+                3rd
+              </div>
+              
+              <div class="text-center position-absolute top-50 w-25 rounded-circle bg-info">
+                4th
+              </div>
+              <div class="text-center position-absolute top-50 w-25 rounded-circle bg-danger">
+                5th
+              </div>
+              <div class="text-center position-absolute top-50 w-25 rounded-circle bg-primary">
+                6th
+              </div> --}}
+              <div class="m-auto">
+                <a href="#" class="brand-logo">
+                  <img src="{{ asset('images/logo/logo.png') }}" alt="website Logo">
+                </a>
+              </div>
+              
+            </div>
+            
+          </div>
+        {{-- auth-wrapper  --}}
+          <div class="col-md-7 ">
+            <div class="auth-wrapper d-inline">
+              <div class="m-auto" style="width: fit-content;">
+                <form class="auth-login-form mt-2" method="POST" action="{{ route('login') }}">
+                  @csrf
+                  <div class="mb-1">
+                    <label 
+                    for="login-email" 
+                    class="form-label text-black fw-bolder">
+                      Email
+                    </label>
+                    <input
+                      type="text"
+                      class="form-control border-top-0 border-bottom-3 border-bottom-black border-end-0 border-start-0 @error('email') is-invalid @enderror rounded-0 text-black fw-bolder bg-transparent"
+                      id="login-email"
+                      name="email"
+                      placeholder="john@example.com"
+                      aria-describedby="login-email"
+                      tabindex="1"
+                      autofocus
+                      value="{{ old('email') }}"
+                    />
+                    @error('email')
+                      <span class="invalid-feedback" role="alert">
+                        <strong>{{ $message }}</strong>
+                      </span>
+                    @enderror
+                  </div>
+    
+                  <div class="mb-1">
+                    <div class="d-flex justify-content-between">
+                      <label class="form-label fw-bolder text-black" for="login-password">Password</label>
+                      
+                    </div>
+                    <div class="input-group input-group-merge form-password-toggle ">
+                      <input
+                        type="password"
+                        class="form-control form-control-merge border-top-0 border-bottom-3 border-bottom-black border-end-0 border-start-0 rounded-0 text-black fw-bolder bg-transparent"
+                        id="login-password"
+                        name="password"
+                        tabindex="2"
+                        placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
+                        aria-describedby="login-password"
+                      />
+                      <span class="input-group-text cursor-pointer border-top-0 border-bottom-3 border-bottom-black border-end-0 border-start-0 rounded-0 bg-transparent fw-bolder text-black"><i data-feather="eye"></i></span>
+                    </div>
+                  </div>
+                  <div class="mb-1">
+                    <div class="form-check">
+                      <input class="form-check-input border-primary bg-transparent" type="checkbox" id="remember" name="remember" tabindex="3" {{ old('remember') ? 'checked' : '' }} />
+                      <label class="form-check-label text-black fw-bolder" for="remember"> Remember Me </label>
+                      @if (Route::has('password.request'))
+                      <div class="float-end">
+                        <a href="{{ route('password.request') }}">
+                          <small class="text-black fw-bolder">Forgot Password?</small>
+                        </a>  
+                      </div>
+                      
+                      @endif
+                    </div>
+                  </div>
+                  <button type="submit" class="btn btn-primary w-100" tabindex="4">Sign in</button>
+                </form>
+                
+                <div class="text-center fw-bolder text-black w-100 custom_divider_wrapper">
+                  <span class="border border-1 border-black w-50"></span>
+                  <span class="mx-2">or</span>
+                  <span class="w-50 border border-1 border-black"></span>
+                </div>
+
+                <p class="text-center">
+                  {{-- <div class="divider text-black fw-bolder my-2">
+                    <div class="divider-text">or</div>
+                  </div> --}}
+                  <span class="text-black fw-bold">New on our platform?</span>
+                  @if (Route::has('register'))
+                  <a href="{{ route('register') }}">
+                    <span class="fw-bolder text-primary">Create an account</span>
+                  </a>
+                  @endif
+                </p>
+              </div>
+            </div>
+            
+          </div>
+        </div>
+        
+
+        {{-- 
+
+        <div class="auth-footer-btn d-flex justify-content-center">
+
+          <a href="#" class="btn btn-facebook">
+            <i data-feather="facebook"></i>
+          </a>
+          <a href="#" class="btn btn-twitter white">
+            <i data-feather="twitter"></i>
+          </a>
+          <a href="#" class="btn btn-google">
+            <i data-feather="mail"></i>
+          </a>
+          <a href="#" class="btn btn-github">
+            <i data-feather="github"></i>
+          </a>
+          
+        </div> --}}
+        
+      </div>
+    </div>
+    <!-- /Login basic -->
+  </div>
+</div>
+@endsection
